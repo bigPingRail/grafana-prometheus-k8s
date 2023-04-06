@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blackbox-exporter
+spec:
+  selector:
+    matchLabels:
+      app: blackbox-exporter
+  template:
+    metadata:
+      labels:
+        app: blackbox-exporter
+    spec:
+      containers:
+        - name: blackbox
+          image: prom/blackbox-exporter:v0.23.0
+          args:
+            - "--config.file=/etc/blackbox-exporter/blackbox.yml"
+          ports:
+            - containerPort: 9115
+          volumeMounts:
+            - mountPath: /etc/blackbox-exporter
+              name: blackbox-config
+          resources: 
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "0.5"
+              memory: "256Mi"
+      volumes:
+        - name: blackbox-config
+          configMap:
+            name: blackbox-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blackbox-exporter
+  labels:
+    app: blackbox-exporter
+spec:
+  selector:
+    app: blackbox-exporter
+  ports:
+    - name: blackbox-exporter
+      port: 9115
+      targetPort: 9115
+  type: ClusterIP
