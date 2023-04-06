@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-configmap
+data:
+  prometheus.yml: |  
+      global:
+        scrape_interval: 15s
+        evaluation_interval: 1m
+
+      rule_files:
+        - /etc/prometheus/rules/*.yml
+
+      scrape_configs:
+
+        - job_name: "website-monitoring-http"
+          metrics_path: /probe
+          params:
+            module: [http_2xx]
+          file_sd_configs:
+            - files:
+              - /etc/prometheus/targets.yml
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: blackbox-exporter:9115
+
+        - job_name: "website-monitoring-icmp"
+          metrics_path: /probe
+          params:
+            module: [icmp]
+          file_sd_configs:
+            - files:
+              - /etc/prometheus/targets.yml
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: blackbox-exporter:9115
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rules-configmap
+data:
+  rules.yml: |
+    groups:
+      - name: web.rules
+        rules:
+          - alert: invalid_http_status_code
+            expr: probe_http_status_code != 200
+            for: 1m
+            labels:
+              severity: critical
+
+          - alert: certificate_validity_28_days
+            expr: (probe_ssl_earliest_cert_expiry - time ()) < ( 60 * 60 * 24 * 28 )
+            for: 1m
+            labels:
+              severity: warning
+
+          - alert: certificate_validity_10_days
+            expr: (probe_ssl_earliest_cert_expiry - time ()) < ( 60 * 60 * 24 * 10 )
+            for: 1m
+            labels:
+              severity: critical
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: targets-configmap 
+data:
+  targets.yml: |
+    - targets:
+      - ya.ru
+      - google.com
+      - bing.com
