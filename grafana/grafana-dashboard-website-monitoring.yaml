@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-dashboard-website-json
+  namespace: monitoring
 data:
   website-monitoring.json: |
     {
