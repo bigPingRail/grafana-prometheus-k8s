@@ -1,0 +1,33 @@
+# https://taskfile.dev
+
+version: '3'
+silent: true
+
+tasks:
+  prepare:
+    desc: prepare k8s cluster 
+    cmds:
+      - | 
+        kubectl apply -f _cluster-config
+        kubectl create configmap grafana-config --namespace monitoring --from-file grafana/config/grafana.ini 2>/dev/null || true
+        kubectl create configmap grafana-dashboard-node-exporter --namespace monitoring --from-file grafana/dashboards/node-exporter.json 2>/dev/null || true
+        kubectl create configmap grafana-dashboard-website-monitoring --namespace monitoring --from-file grafana/dashboards/website-monitoring.json 2>/dev/null || true   
+  apply:
+    desc: apply k8s configuration
+    cmds:
+      - |
+        kubectl apply -f blackbox-exporter -f grafana -f node-exporter -f prometheus 
+
+  destroy: 
+    desc: unroll all changes, delete downloaded files
+    cmds:
+      - |
+        kubectl delete -f _cluster-config -f blackbox-exporter -f grafana -f node-exporter -f prometheus  
+
+  init:
+    cmds:
+      - task: prepare
+      - task: apply
+  
+  
+  

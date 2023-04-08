@@ -25,9 +25,12 @@ spec:
               mountPath: /etc/grafana/provisioning/datasources
             - name: grafana-dashboards
               mountPath: /etc/grafana/provisioning/dashboards
-            - name: grafana-dashboards-website-monitoring
+            - name: grafana-dashboard-website-monitoring
               mountPath: /var/lib/grafana/dashboards/website-monitoring.json
               subPath: website-monitoring.json
+            - name: grafana-dashboard-node-exporter
+              mountPath: /var/lib/grafana/dashboards/node-exporter.json
+              subPath: node-exporter.json
           resources: 
             limits:
               cpu: "1"
@@ -38,16 +41,20 @@ spec:
       volumes:
         - name: grafana-config
           configMap:
-            name: grafana-configmap
+            name: grafana-config
         - name: grafana-datasources
           configMap:
             name: grafana-datasources-configmap
         - name: grafana-dashboards
           configMap:
             name: grafana-dashboards-configmap
-        - name: grafana-dashboards-website-monitoring
+        - name: grafana-dashboard-website-monitoring
           configMap: 
-            name: grafana-dashboard-website-json
+            name: grafana-dashboard-website-monitoring
+        - name: grafana-dashboard-node-exporter
+          configMap: 
+            name: grafana-dashboard-node-exporter 
+---
 ---
 apiVersion: v1
 kind: Service
