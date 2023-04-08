@@ -14,7 +14,7 @@ To install and set up Grafana and Prometheus in your Kubernetes cluster, follow 
 2. Install `task` from [taskfile.dev](https://taskfile.dev/installation/) by following the instructions in their official documentation.
 3. Make sure you have configured `kubectl`.
 4. Run `task init` to initialize the setup process.
-5. Once the setup is complete, you can access Grafana and Prometheus dashboards to monitor your Kubernetes cluster.
+5. Once the setup is complete, you can access Grafana (default login/password is `admin`/`admin`) and Prometheus dashboards to monitor your Kubernetes cluster.
 
 ## Usage
 

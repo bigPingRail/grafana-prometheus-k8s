@@ -9,9 +9,15 @@ tasks:
     cmds:
       - | 
         kubectl apply -f _cluster-config
-        kubectl create configmap grafana-config --namespace monitoring --from-file grafana/config/grafana.ini 2>/dev/null || true
-        kubectl create configmap grafana-dashboard-node-exporter --namespace monitoring --from-file grafana/dashboards/node-exporter.json 2>/dev/null || true
-        kubectl create configmap grafana-dashboard-website-monitoring --namespace monitoring --from-file grafana/dashboards/website-monitoring.json 2>/dev/null || true   
+        kubectl create configmap grafana-config \
+        --namespace monitoring \
+        --from-file grafana/config/grafana.ini 2>/dev/null || true
+        kubectl create configmap grafana-dashboard-node-exporter \
+        --namespace monitoring \
+        --from-file grafana/dashboards/node-exporter.json 2>/dev/null || true
+        kubectl create configmap grafana-dashboard-website-monitoring \
+        --namespace monitoring \
+        --from-file grafana/dashboards/website-monitoring.json 2>/dev/null || true   
   apply:
     desc: apply k8s configuration
     cmds:
@@ -19,7 +25,7 @@ tasks:
         kubectl apply -f blackbox-exporter -f grafana -f node-exporter -f prometheus 
 
   destroy: 
-    desc: unroll all changes, delete downloaded files
+    desc: unroll all changes
     cmds:
       - |
         kubectl delete -f _cluster-config -f blackbox-exporter -f grafana -f node-exporter -f prometheus  
