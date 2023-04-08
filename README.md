@@ -1,6 +1,6 @@
 # Kubernetes cluster monitoring
 
-Setting Up Grafana and Prometheus in a Kubernetes Cluster
+Setting Up `STATELESS` Grafana and Prometheus in a Kubernetes Cluster
 
 ## Description
 
